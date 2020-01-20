@@ -2,7 +2,7 @@
 #include <iostream>
 #include "cubeDiff.h"
 
-float *readCube()
+float *readCube(long int &totalPoints)
 {
 	std::string cubeFile{};
 	std::getline(std::cin,cubeFile);
@@ -35,7 +35,7 @@ float *readCube()
 			ifile >> gridStep[(i*3)+j];
 	}
 
-	long int totalPoints{gridN[0]*gridN[1]*gridN[2]};
+	totalPoints=gridN[0]*gridN[1]*gridN[2];
 	
 	//Atomic positions. PENDING - make an struct.
 	int *atomN{ new int[nAtoms]{} };
@@ -54,14 +54,31 @@ float *readCube()
 	for(int i=0;i<totalPoints;i++)
 		ifile >> volData[i];
 
-	for(int i=0;i<nAtoms;i++)
+	//Output file
+	const std::string diffFile{"difference.cube"};
+	std::ifstream chkfile(diffFile);
+	if(!chkfile)
 	{
-		std::cout << atomN[i] << ' ';
-		std::cout << atomData[(i*4)+1] << '\n';
+		chkfile.close();
+		std::ofstream ofile(diffFile);
+		ofile << "Resulting difference cube - cube_diff program"
+			<< '\n';
+		ofile << cellP[0] << cellP[1] << cellP[2]
+                << cellP[3] << cellP[4] << cellP[5] << '\n';	
+//		std::ofstream ofile(diffiFile);
 	}
+
+//	else
+//	{
+//		chkfile.close();
+//		std::ofstream ofile(diffFile,std::ios::app);
+//		ofile << "toyabierto";	
+////		std::ofstream ofile
+//	}
 
 	delete[] atomN;
 	delete[] atomData;
+	
 
 	return volData;
 }
