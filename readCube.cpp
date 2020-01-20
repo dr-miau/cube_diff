@@ -2,7 +2,7 @@
 #include <iostream>
 #include "cubeDiff.h"
 
-void readCube()
+float *readCube()
 {
 	std::string cubeFile{};
 	std::getline(std::cin,cubeFile);
@@ -34,14 +34,35 @@ void readCube()
 		for(int j=0;j<3;j++)
 			ifile >> gridStep[(i*3)+j];
 	}
-	
-	//Atomic positions
-	
 
-	for(int i=0;i<3;i++)
+	long int totalPoints{gridN[0]*gridN[1]*gridN[2]};
+	
+	//Atomic positions. PENDING - make an struct.
+	int *atomN{ new int[nAtoms]{} };
+	double *atomData{ new double[nAtoms*4]{} };
+
+	for(int i=0;i<nAtoms;i++)
 	{
-		std::cout << gridN[i] << ' ';
-		std::cout << gridStep[(i*3)+i] << '\n';
+		ifile >> atomN[i];
+		for(int j=0;j<4;j++)
+		       ifile >> atomData[i*4+j];	
 	}
+
+	//Volumetric Data
+	float *volData{ new float[totalPoints]{} };
+
+	for(int i=0;i<totalPoints;i++)
+		ifile >> volData[i];
+
+	for(int i=0;i<nAtoms;i++)
+	{
+		std::cout << atomN[i] << ' ';
+		std::cout << atomData[(i*4)+1] << '\n';
+	}
+
+	delete[] atomN;
+	delete[] atomData;
+
+	return volData;
 }
 
