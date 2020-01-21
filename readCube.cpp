@@ -2,6 +2,8 @@
 #include <iostream>
 #include "cubeDiff.h"
 
+//Reads cube, and initialize difference.cube if it
+//doesn't exists.
 float *readCube(long int &totalPoints)
 {
 	std::string cubeFile{};
@@ -54,31 +56,44 @@ float *readCube(long int &totalPoints)
 	for(int i=0;i<totalPoints;i++)
 		ifile >> volData[i];
 
-	//Output file
+	//Output file header
 	const std::string diffFile{"difference.cube"};
 	std::ifstream chkfile(diffFile);
 	if(!chkfile)
 	{
 		chkfile.close();
 		std::ofstream ofile(diffFile);
-		ofile << "Resulting difference cube - cube_diff program"
+		ofile << " Resulting difference - cube_diff program"
 			<< '\n';
-		ofile << cellP[0] << cellP[1] << cellP[2]
-                << cellP[3] << cellP[4] << cellP[5] << '\n';	
-//		std::ofstream ofile(diffiFile);
+		ofile << '\t' << cellP[0] << '\t' << cellP[1] 
+			<< '\t' << cellP[2] << '\t' << cellP[3] 
+			<< '\t' << cellP[4] << '\t' << cellP[5] 
+			<< '\n';	
+		ofile << '\t' << nAtoms << '\t' << origin[0]
+			<< '\t' << origin[1] << '\t' << origin[2]
+			<< '\n';
+		for(int i=0;i<3;i++)
+			ofile << '\t' << gridN[i] << '\t' 
+				<< gridStep[0+i*3] << '\t'
+				<< gridStep[1+i*3] << '\t'
+				<< gridStep[2+i*3] << '\n';
+		for(int i=0;i<nAtoms;i++)
+			ofile << '\t' << atomN[i] << '\t'
+			       << atomData[0+i*4] << '\t'	
+			       << atomData[1+i*4] << '\t'	
+			       << atomData[2+i*4] << '\t'	
+			       << atomData[3+i*4] << '\n';	
 	}
 
-//	else
-//	{
-//		chkfile.close();
-//		std::ofstream ofile(diffFile,std::ios::app);
-//		ofile << "toyabierto";	
-////		std::ofstream ofile
+	else
+	{
+		std::cout << "difference.cube exists, "
+		       << "abort or the code will append \n"
+		       << "the new differences to this file.\n";
 //	}
 
 	delete[] atomN;
 	delete[] atomData;
-	
 
 	return volData;
 }
